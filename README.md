@@ -2,6 +2,10 @@
 
 A Chrome extension that adds your remaining holidays, in days, above Peepel's calendar.
 
+![Holiday summary showing 19 days remaining in a local preview](docs/preview.jpg)
+
+*Preview uses synthetic data.*
+
 ## Install
 
 1. Download this repo via **Code → Download ZIP** and unzip it, or clone it.
