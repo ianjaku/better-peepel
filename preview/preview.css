@@ -1,0 +1,28 @@
+/* Include Peepel's margin reset so the extension's spacing is tested against it. */
+* { box-sizing:border-box; margin:0; }
+body { margin:0; min-height:100vh; background:radial-gradient(ellipse at 55% 20%,#d9e9eb,#a7cbd5); font:14px/1.5 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif; color:#212a27; }
+.site-header { width:min(960px,calc(100% - 40px)); margin:0 auto; height:76px; display:flex; align-items:center; justify-content:space-between; }
+.site-header a { font-weight:650; color:inherit; text-decoration:none; font-size:16px; }
+.site-header span { font-size:12px; color:#44606a; }
+main { margin:8px auto 20px; padding:24px; width:min(960px,calc(100% - 40px)); background:#ffffffd9; border:1px solid #e5eef0; border-radius:13px; }
+[role=tablist] { display:flex; gap:4px; justify-content:flex-end; margin-bottom:26px; }
+[role=tab] { border:0; border-radius:8px; padding:10px 16px; font:inherit; cursor:pointer; background:#e7ecf7; color:#566074; }
+[role=tab][aria-selected=true] { color:#1d2526; background:white; box-shadow:0 0 0 1px #dae0ea,0 2px 3px #0000000a; }
+.calendar { width:310px; padding:18px; border:1px solid #d6e0e1; border-radius:13px; margin:20px auto 24px; }
+.calendar-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; font-size:17px; }
+.arrows { color:#4e69ad; font-size:26px; letter-spacing:8px; line-height:1; }
+.calendar-grid { display:grid; grid-template-columns:repeat(7,1fr); gap:3px; text-align:center; }
+.calendar-grid span { height:34px; display:grid; place-items:center; font-size:12px; }
+.calendar-grid .weekday { color:#616c6b; font-size:11px; }.outside { opacity:.4; }
+.calendar-grid .today { border:2px solid #576ec3; border-radius:50%; }
+.original-balances { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:12px; }
+.original-card { background:white; padding:16px; border:1px solid #d9dfe0; border-radius:12px; box-shadow:0 1px 2px #00000008; }
+.card-content,.card-label { display:flex; align-items:center; gap:10px; }.card-content { justify-content:space-between; }
+.card-label { min-width:0; font-size:13px; }.block { display:block; }.text-xs { font-size:11px; color:#777; }
+.card-amount { display:flex; align-items:baseline; gap:3px; font-size:11px; white-space:nowrap; }
+.card-amount span:first-child { color:var(--card-color); font-weight:650; font-size:15px; }.unit { font-size:10px; color:#777; }
+.original-icon { background:#f5f7f6; color:var(--card-color); padding:5px 8px; border-radius:8px; font-size:20px; }
+.original-progress { height:5px; background:#f4f4f4; margin-top:16px; border-radius:4px; }.original-progress span { display:block; background:var(--card-color); height:5px; width:45%; border-radius:4px; }
+.preview-tools { margin:0 auto 25px; width:min(960px,calc(100% - 40px)); color:#425e67; display:flex; align-items:center; justify-content:flex-end; flex-wrap:wrap; gap:12px; font-size:11px; }
+.preview-tools span { margin-right:auto; }.preview-tools button { border:1px solid #89b2bf; background:#ffffff60; padding:7px 10px; border-radius:6px; color:#304f59; cursor:pointer; font:inherit; }
+@media(max-width:700px) { .original-balances { grid-template-columns:1fr; } main { width:calc(100% - 24px); padding:14px; }.calendar { width:min(310px,100%); }.site-header { height:58px; } }

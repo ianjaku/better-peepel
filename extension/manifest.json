@@ -1,0 +1,14 @@
+{
+  "manifest_version": 3,
+  "name": "Peepel, in days",
+  "version": "1.0.0",
+  "description": "Your remaining holidays, in days. A clear summary at the top of Peepel's leave page.",
+  "permissions": ["storage"],
+  "content_scripts": [
+    {
+      "matches": ["https://selfservice.peepel.io/*"],
+      "js": ["balances.js", "summary.js", "content.js"],
+      "run_at": "document_idle"
+    }
+  ]
+}
