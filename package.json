@@ -1,6 +1,6 @@
 {
   "name": "peepel-clearer",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "private": true,
   "description": "A Chrome extension that turns Peepel leave balances into a readable summary in days.",
   "scripts": {

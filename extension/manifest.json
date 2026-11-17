@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Peepel, in days",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Your remaining holidays, in days. A clear summary at the top of Peepel's leave page.",
   "permissions": ["storage"],
   "content_scripts": [
