@@ -30,6 +30,15 @@
     return null;
   }
 
+  function parseUsage(amounts, text) {
+    if (amounts.length !== 2) return null;
+    const defaultUnit = /\b(dag(?:en)?|days?)\b/i.test(text) ? "days" : /\b(uur|uren|hours?)\b/i.test(text) ? "hours" : undefined;
+    const allowance = parseAmount(normalize(amounts[1]).replace(/^\/\s*/, ""), defaultUnit);
+    const used = parseAmount(amounts[0], allowance?.unit || defaultUnit);
+    if (!allowance || !used || used.unit !== allowance.unit || allowance.value < 0) return null;
+    return { unit: used.unit, used: used.value, allowance: allowance.value, remaining: allowance.value - used.value };
+  }
+
   // Peepel displays used / allowance, not remaining / allowance.
   // Public holidays are different: only the explicitly bookable amount is useful.
   function parseCard({ label, amounts, note = "", text = "" }) {
@@ -37,7 +46,12 @@
     if (!category) return { status: "ignored", label };
     if (category.kind === "public") {
       const bookable = normalize(note).match(new RegExp(`(${decimal})\\s*(dag(?:en)?|days?)\\s*(?:vrij in te plannen|freely bookable|available to (?:book|schedule))`, "i"));
-      if (!bookable) return { status: "unknown", label, reason: "Public holidays have no freely bookable balance listed." };
+      if (!bookable) {
+        // Peepel omits the bookable note when no days remain.
+        const usage = parseUsage(amounts, text);
+        if (usage && usage.remaining <= 0) return { status: "ignored", label };
+        return { status: "unknown", label, reason: "Public holidays have no freely bookable balance listed." };
+      }
       return { status: "balance", label, ...category, remaining: number(bookable[1]), unit: "days", used: null, allowance: null };
     }
     if (amounts.length < 2) {
@@ -45,15 +59,12 @@
       if (/^0(?:[.,]0+)?(?:\s*[uh]0{1,2}m)?$/.test(normalize(amounts[0]))) return { status: "ignored", label };
       return { status: "unknown", label, reason: `${label}: no allowance is listed.` };
     }
-    const defaultUnit = /\b(dag(?:en)?|days?)\b/i.test(text) ? "days" : /\b(uur|uren|hours?)\b/i.test(text) ? "hours" : undefined;
-    const rawAllowance = normalize(amounts[1]).replace(/^\/\s*/, "");
-    const allowance = parseAmount(rawAllowance, defaultUnit);
-    const used = parseAmount(amounts[0], allowance?.unit || defaultUnit);
-    if (!allowance || !used || used.unit !== allowance.unit || allowance.value < 0) {
+    const usage = parseUsage(amounts, text);
+    if (!usage) {
       return { status: "unknown", label, reason: `${label}: the balance could not be read.` };
     }
-    if (allowance.value === 0 && used.value === 0) return { status: "ignored", label };
-    return { status: "balance", label, ...category, unit: used.unit, used: used.value, allowance: allowance.value, remaining: allowance.value - used.value };
+    if (usage.allowance === 0 && usage.used === 0) return { status: "ignored", label };
+    return { status: "balance", label, ...category, ...usage };
   }
 
   function validDayLength(value) {

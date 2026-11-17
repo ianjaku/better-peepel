@@ -50,6 +50,39 @@ test("updates a balance changed by React and handles complete panel replacement"
   assert.equal(ctx.document.querySelectorAll("#peepel-clearer").length, 1);
 });
 
+test("reads animated balances once, including zero usage and bookable public holidays", async (t) => {
+  const ctx = setup(t, { html: panelHTML(examples, { animated: true }) });
+  await tick();
+  assert.equal(ctx.total(), "19");
+  assert.equal(ctx.summary().shadowRoot.querySelector(".notice").hidden, true);
+  assert.equal(ctx.document.querySelector(".tabular-nums").textContent, "16u00m16u00m");
+});
+
+test("uses the final balance throughout an animation and follows changes to its target", async (t) => {
+  const ctx = setup(t, { html: panelHTML(examples, { animated: true }) });
+  const amount = ctx.document.querySelectorAll(".original-card")[1].querySelector(".tabular-nums");
+  amount.lastElementChild.textContent = "0u00m";
+  await tick();
+  assert.equal(ctx.total(), "19");
+  amount.firstElementChild.textContent = "48u00m";
+  amount.lastElementChild.textContent = "42u30m";
+  await tick();
+  assert.equal(ctx.total(), "18");
+  amount.lastElementChild.textContent = "48u00m";
+  await tick();
+  assert.equal(ctx.total(), "18");
+});
+
+test("reads animated day amounts and omits exhausted public holidays without a warning", async (t) => {
+  const ctx = setup(t, { html: panelHTML([
+    { label: "Wettelijke vakantie", amounts: ["2,5", "/ 20"], unit: "dagen" },
+    { label: "Betaalde feestdag", amounts: ["8", "/ 8"], unit: "dagen" }
+  ], { animated: true }) });
+  await tick();
+  assert.equal(ctx.total(), "17.5");
+  assert.equal(ctx.summary().shadowRoot.querySelector(".notice").hidden, true);
+});
+
 test("waits for asynchronously loaded cards", async (t) => {
   const ctx = setup(t, { html: "" });
   assert.equal(ctx.summary(), null);
