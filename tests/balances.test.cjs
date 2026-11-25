@@ -40,6 +40,22 @@ test("public holidays count only the explicitly freely bookable days", () => {
   assert.equal(unknown.status, "unknown");
 });
 
+test("exhausted public holidays need no bookable note, but unreadable or unbookable balances still warn", () => {
+  for (const [used, allowance] of [["0", "/ 0"], ["8", "/ 8"], ["9", "/ 8"], ["64u00m", "/ 64u00m"]]) {
+    const result = summarize([card("Betaalde feestdag", used, allowance, "dagen")]);
+    assert.equal(result.total, 0);
+    assert.equal(result.ignored, 1);
+    assert.deepEqual(result.warnings, []);
+  }
+  for (const item of [
+    card("Betaalde feestdag", "5", "/ 8", "dagen"),
+    card("Betaalde feestdag", "broken", "/ 8", "dagen"),
+    card("Betaalde feestdag", "8", "/ 8"),
+    card("Betaalde feestdag", "8 dagen", "/ 8u00m"),
+    card("Betaalde feestdag", "0", "/ -1", "dagen")
+  ]) assert.equal(parseCard(item).status, "unknown");
+});
+
 test("exhausted and overdrawn entitlements do not inflate the total", () => {
   const result = summarize([card("ADV", "80u00m", "/ 80u00m"), card("Europese vakantie", "112u00m", "/ 104u00m")]);
   assert.equal(result.total, -1);

@@ -19,6 +19,13 @@
     });
   }
 
+  function readAmount(element) {
+    // Peepel's animated counters include a hidden sizing copy of the final value.
+    // Read that copy once so the total also stays accurate during the animation.
+    const finalValue = element.querySelector(':scope > span[aria-hidden="true"].invisible');
+    return normalize((finalValue || element).textContent);
+  }
+
   function readCards(panel) {
     return Array.from(panel.querySelectorAll('[data-slot="card"]'))
       .filter((card) => !card.querySelector('[data-slot="card"]'))
@@ -28,7 +35,7 @@
         return {
           label: normalize(labelElement.textContent),
           note: normalize(labelElement.parentElement.textContent).slice(normalize(labelElement.textContent).length),
-          amounts: Array.from(card.querySelectorAll("span.tabular-nums")).map((amount) => normalize(amount.textContent)),
+          amounts: Array.from(card.querySelectorAll("span.tabular-nums")).map(readAmount),
           text: normalize(Array.from(card.querySelectorAll("span")).map((span) => span.textContent).join(" "))
         };
       }).filter(Boolean);
